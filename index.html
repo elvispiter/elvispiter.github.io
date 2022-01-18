@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Быстрый старт. Размещение интерактивной карты на странице</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=27a16cf7-34e1-48a8-9d06-2caca8fe88be&lang=ru_RU"
+        type="text/javascript">
+        </script>
+    <script type="text/javascript">
+        ymaps.ready(init);
+        function init() {
+            var myMap = new ymaps.Map("map", {
+                center: [59.9, 30.3],
+                zoom: 12
+            });
+        }
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel='stylesheet'
+        href='https://cdnjs.cloudflare.com/ajax/libs/material-design-icons/3.0.1/iconfont/material-icons.min.css'>
+    <link rel="stylesheet" href="./style.css">
+
+</head>
+
+<body style="margin: 0%;">
+    <div id="map" style="width: 100vw; height: 100vh; padding: 0%; margin: 0%"></div>
+    <div style="width:35vw; height: 100vh; border-radius: 10px; position: absolute; left: 25px; top: 25px; z-index: 2;" id='results'>
+        <div class="container" id="search">
+            <input type="text" class="fuzzy-search search" placeholder=" Искать адрес или ID..."/>
+            <div class="tags">
+                <div>Фильтр: </div>
+                <div class="tag filter" data-filter="1996">Любой</div>
+                <div class="tag filter" data-filter="1993">Билборд 6x3</div>
+                <div class="tag filter" data-filter="1994">Цифровой 6x3 </div>
+                <div class="tag filter" data-filter="1995">Суперсайт</div>
+            </div>
+            <div class="controls">
+                <div>Сортировка: </div><a class="sort" href="#" data-sort="album">Album</a><a class="sort" href="#"
+                    data-sort="artist">Artist</a><a class="sort" href="#" data-sort="date">Date </a>
+            </div>
+        </div>
+        <div class="container">
+            <div class="list"></div>
+        </div>
+    </div>
+</body>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js'></script>
+<script src="./script.js"></script>
+
+</html>

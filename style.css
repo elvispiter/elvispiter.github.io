@@ -1,0 +1,196 @@
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css?family=Open Sans");
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-width: 200px;
+  background: #ede8e8;
+  color: black;
+  font-family: "Open Sans";
+  font-family: 16px;
+  line-height: 1.6;
+}
+
+a {
+  text-decoration: none;
+}
+
+.container {
+  padding-top: 10px;
+  max-width: 500px;
+  padding: 20px 1.5rem;
+  margin: 0 auto;
+  margin-top: 10px;
+  background: white;
+  border-radius: 10px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  font-size: 2rem;
+  font-weight: 600;
+  border-bottom: 1px solid #d6d6d6;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+}
+
+.count {
+  padding: 0.3rem;
+  border-radius: 1rem;
+  font-size: 1rem;
+  margin-left: 0.5rem;
+  margin-top: -2rem;
+  min-width: 1.5rem;
+  line-height: 1.2;
+  text-align: center;
+  color: white;
+  background: #E27;
+}
+
+.list__item {
+  display: block;
+  padding: 1rem;
+  margin: 0 0 1rem 0;
+  background: white;
+  border-radius: 1rem;
+  color: inherit;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.search {
+  border-radius: 5px;
+  height: 35px;
+  width: 100%;
+  border: 1px solid #cccccc; 
+  margin-bottom: 1rem;
+}
+
+.list__item:hover {
+  color: #E27 !important;
+  box-shadow: 0 1px 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+.album {
+  font-size: 1.25rem;
+  color: inherit !important;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+  color: dimgrey;
+}
+.meta > div {
+  padding-right: 0.5rem;
+}
+.meta > div:not(:last-child):after {
+  content: "·";
+  padding-left: 0.5rem;
+  display: inline-block;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  color: black;
+}
+.controls > div {
+  font-weight: 600;
+}
+.controls > * {
+  margin-right: 1rem;
+  color: inherit;
+  transition: all 0.2s ease;
+}
+.controls a:hover {
+  color: #E27;
+}
+.controls .sort {
+  display: flex;
+  align-items: flex-end;
+}
+.controls .sort:after {
+  display: block;
+  opacity: 0;
+  content: "";
+  margin-left: 0.25rem;
+  font-family: "Material Icons";
+  font-weight: 400;
+  font-style: normal;
+  font-size: 1.5rem;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "liga";
+}
+.controls .sort.asc, .controls .sort.desc {
+  color: #E27;
+}
+.controls .sort.asc:after {
+  opacity: 1;
+  content: "arrow_drop_up";
+}
+.controls .sort.desc:after {
+  opacity: 1;
+  content: "arrow_drop_down";
+}
+
+.tags {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+.tags div {
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+.tags .tag {
+  display: flex;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+  margin-right: 0.5rem;
+  color: white;
+  background: lightblue;
+  padding: 0.2rem 0.6rem 0.2rem 0.6rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.tags .tag:after {
+  content: "x";
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  max-width: 0;
+  transition: all 0.2s ease;
+}
+.tags .tag.active:after {
+  opacity: 1;
+  visibility: visible;
+  max-width: 2rem;
+  margin-left: 0.4rem;
+}
+.tags .tag:hover, .tags .tag.active {
+  background: blue;
+}
