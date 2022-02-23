@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Карта рекламоносителей - Elvis</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel='stylesheet'
+        href='https://cdnjs.cloudflare.com/ajax/libs/material-design-icons/3.0.1/iconfont/material-icons.min.css'>
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=27a16cf7-34e1-48a8-9d06-2caca8fe88be&lang=ru_RU"
+        type="text/javascript">
+        </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/list.js/2.3.1/list.js'></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" href="./style.css">
+
+</head>
+
+
+
+<body style="margin: 0%; overflow: hidden; position: fixed; width: 100vw;">
+    <div id='backdrop' class="backdrop"></div>
+    <div id='details' class="details fadein">
+        <div class="wrapper">
+            <div class = point-description-container> <div class="point-description">
+                    <a class="details-meta">
+                        <div class="current-title" style="width: 60%;"></div>
+                        <span class="gray-text">ID:</span>410А<br><span class="gray-text">Сторона:</span><div class="point-button-row"><button
+                            side_id="0" class="side-button selected">А</button><button side_id="1"
+                            class="side-button ">Б</button></div></a></div>
+                <div class='details-buttons'>
+                    <button class="details-select-button is-selected-button">Добавить в выборку</button>
+                    <button class="details-select-button open details-close-button">Вернуться к карте</button>
+                </div>
+                <img class="details-logo" src="./logo-black.png" alt="">
+            </div>
+            <img class="current-image" src=""></img>
+            <div id='map-details'></div>
+            <img class="map-img" src=""></img>
+         </div>         
+    </div>
+    <div id='info' class="info fadein">
+        <div class="info-container"><div class="info-title current-title">п. Ушаки, 636 км 780 м Московское шоссе</div>
+            <div class="point-description"><a
+                    class="point-meta">ID: 410<br>Сторона: А<div class="point-button-row"><button
+                            side_id="0" class="side-button selected">А</button><button side_id="1"
+                            class="side-button ">Б</button></div></a></div>
+            <button class="info-select-button is-selected-button">Добавить в выборку</button>
+            <button class="open info-select-button details-open-button">Открыть в окне</button>
+        </div>
+        <img class="info-image current-image"
+        src="http://elvispiter.ru/images/636%D0%BA%D0%BC%20780%D0%BC%20%D0%9C%D0%BE%D1%81%D0%BA%D0%BE%D0%B2%D1%81%D0%BA%D0%BE%D0%B5%20%D1%88%D0%BE%D1%81%D1%81%D0%B5%20%D0%B8%D0%B7%20%D0%A1%D0%9F%D0%B1%2C%20%D0%90.jpg">
+    </div>
+    <div id="map" class="map"></div>
+    <div class="panel-main">
+    <div class="panel-selector-container" id='panel-selector-container'>
+        <div class="panel-selector active" data-panel="search" id="searchSelector">Поиск</div>
+        <div class="panel-selector" data-panel="poi-list">Точки интереса/POI</div>
+        <div class="panel-selector" data-panel="selected" id="selectedCount">Выборка (0)</div>
+    </div>
+    <div id='search' class="panel-wrapper active">
+        <div class="container" id="search">
+            <button class="bottom-button search-selector outline" style="border-color: red; width: 100%; display: none;" id="resetPoi" data-panel="search" style="width: 100%; margin-bottom: 10px;">Сбросить PoI фильтр</button>
+
+            <input type="text" placeholder="Искать адрес или ID" class="search-input search"/>
+            <div class="tags">
+                <div>Сторона: </div>
+                <div class="tag filter color-button-1 side-filter" data-filter="А">Сторона А</div>
+                <div class="tag filter color-button-1 side-filter" data-filter="Б">Сторона Б</div>
+            </div>
+            <!-- <div class="tags">
+                <div>Тип: </div>
+                <div class="tag filter color-button-2" data-filter="1993">Статический</div>
+                <div class=" color-button-2 tag filter " data-filter="1994">Цифровой</div>
+            </div> -->
+            <div class="controls">
+                <div>Сортировка: </div><a class="sort" href="#" data-sort="id">ID</a><a class="sort" href="#"
+                    data-sort="address">Адрес</a>
+                <!-- <a class="sort" href="#" data-sort="sides">Сторона</a> -->
+            </div>
+        </div>
+        <div class="list-view" style="overflow:scroll; padding-bottom: 0px; contain: strict;">
+            <div class="list painter" style="scroll-behavior: smooth;">Загрузка рекламоносителей займет несколько секунд...</div>
+        </div>
+    </div>
+    <div id='poi-list' class="panel-wrapper">
+        <h3 style="margin: 20px 24px; margin-bottom: -10px;" class="hide-in-mobile">Поиск рекламоносителей рядом с заданными объектами.</h3>
+        <div class="container">
+            <input type="text" placeholder="Например, автозаправка или ozon" class="search-input" id="poiSearchInput"/>
+            <div class="tags">
+                <div>Радиус: </div>
+                <div class="tag filter color-button-1 distance-filter" data-filter="100">100м</div>
+                <div class="tag filter color-button-1 distance-filter" data-filter="500">500м</div>
+                <div class="tag filter color-button-1 distance-filter active" data-filter="1000">1км</div>
+                <div class="tag filter color-button-1 distance-filter" data-filter="2000">2км</div>
+                <div class="tag filter color-button-1 distance-filter" data-filter="5000">5км</div>
+            </div>
+            <!-- <div class="tags">
+                <div class="tag filter color-button-1" data-filter="1995">Показать на карте</div>
+                <div class="tag filter color-button-1" data-filter="1995">Сбросить фильтр</div>
+            </div> -->
+            <button class="bottom-button search-selector outline" id="showSides" data-panel="search" style="width: 100%; margin-bottom: 10px;">Показать подходящие поверхности</button>
+
+        </div>
+        <div class="list-view" style="overflow:scroll; contain: strict;">
+            <div class="list painter"></div>
+        </div>
+    </div>
+    <div id='selected' class="panel-wrapper">
+        <!-- <div class="container" id="search">
+            <input type="text" placeholder="Искать адрес или ID" class="search-input search"/>
+            <div class="tags">
+                <div>Сторона: </div>
+                <div class="tag filter color-button-1" data-filter="1995">Сторона А</div>
+                <div class="tag filter color-button-1" data-filter="1995">Сторона Б</div>
+            </div>
+             <div class="tags">
+                <div>Тип: </div>
+                <div class="tag filter color-button-2" data-filter="1993">Статический</div>
+                <div class=" color-button-2 tag filter " data-filter="1994">Цифровой</div>
+            </div>
+            <div class="controls">
+                <div>Сортировка: </div><a class="sort" href="#" data-sort="id">ID</a><a class="sort" href="#"
+                    data-sort="address">Адрес</a>
+             <a class="sort" href="#" data-sort="sides">Сторона</a>
+            </div> 
+        </div>-->
+        <button class="bottom-button outline" onclick="navigator.clipboard.writeText(window.location.href);" style="width: calc(100% - 50px); margin-left: 25px; border-color:#69995D;">Скопировать ссылку на выборку</button>
+
+        <div class="list-view selected" style="overflow:scroll;">
+            <div class="list painter"></div>
+        </div>
+    </div>
+
+</div>
+</body>
+<script src="./script.js"></script>
+
+</html>
