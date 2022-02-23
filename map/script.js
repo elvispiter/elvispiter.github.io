@@ -130,14 +130,20 @@ function updateSelectedCount () {
 
 function selectSide (side) { // Добавлет сторону в выборку
   selected.add(side)
-  document.getElementById('search').querySelector('#id' + side.id).querySelector('input').checked = true
+  //document.getElementById('search').querySelector('#id' + side.id).querySelector('input').checked = true
+  //document.getElementById('selected').querySelector('#id' + side.id).querySelector('input').checked = true
+  $('.id' + side.id).prop('checked', true);
+  setSide(side.board, side.board.sides.indexOf(side.side))
   updateSelectedCount()
 }
 
 function deselectSide (side) { // Удаляет сторону из выборки
   document.getElementById('search').querySelector('#id' + side.id).querySelector('input').checked = false
+  document.getElementById('selected').querySelector('#id' + side.id).querySelector('input').checked = false
+  $('.id' + side.id).prop('checked', false);
   console.log(side)
   selected.remove('id', side.id)
+  setSide(side.board, side.board.sides.indexOf(side.side))
   updateSelectedCount()
 }
 
@@ -306,7 +312,7 @@ let options = {
       '<div class="address" onclick="showOnMap(getById(\''+side.id+'\'))"></div>' +
       '<div class="tags meta">' +
         '<label class="custom-checkbox">' +
-          '<input type="checkbox"'+ checked +'onclick="handleCheckbox(\''+ side.id +'\', this.checked)">' +
+          '<input class="id' + side.id + '" type="checkbox"'+ checked +'onclick="handleCheckbox(\''+ side.id +'\', this.checked)">' +
           '<span></span>' +
         '</label>' +
         '<div class="tag">Сторона ' + side.side + '</div>' +
