@@ -303,7 +303,7 @@ async function loadBanners(){
 }
 
 let options = {
-  valueNames: [ 'address', 'side', 'id', 'selected'],
+  valueNames: [ 'address', 'side', 'id', 'selected', 'uuid'],
   item: function (side) {
     let checked =  ''
     if(side.selected) checked = 'checked '
@@ -316,7 +316,7 @@ let options = {
           '<span></span>' +
         '</label>' +
         '<div class="tag">Сторона ' + side.side + '</div>' +
-        '<div class="id"></div>' +
+        '<div class="uuid"></div>' +
       '</div>' +
     '</div>' +
     '</a>'
