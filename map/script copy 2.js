@@ -266,8 +266,10 @@ async function loadBanners(){
     let placemark = new ymaps.Placemark(board.location, {
       balloonContent: boardLayout,
     }, {
-      preset: 'islands#nightIcon', // Стиль иконки
-      //openEmptyBalloon: true
+      //preset: 'islands#nightIcon', // Стиль иконки
+      iconLayout: ymaps.templateLayoutFactory.createClass(
+        '<div class="placemark"><img src="https://www.shareicon.net/data/256x256/2015/11/06/668072_arrows_512x512.png" ></img></div>',
+        {}),
     });
     placemarks[board.location] = placemark
     // Вызываем функцию при клике на балун

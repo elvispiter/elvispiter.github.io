@@ -1,11 +1,11 @@
 import json
 
 items = list()
-with open('elvis2.csv', encoding='utf-8') as csv:
+with open('elvis5.csv', encoding='utf-8') as csv:
     for line in csv.read().split('\n'):
         item = dict()
         line = line.split(';')
-        item['id'], item['address'], item['direction'], item['location'], item['sides'], item['images'] = line
+        item['uuid'], item['id'], item['address'], item['direction'], item['location'], item['sides'], item['images'] = line
         item['sides'] = item['sides'].split(', ')
         item['images'] = item['images'].split(', ')
         item['location'] = [*map(float, item['location'].split(', '))]
