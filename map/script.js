@@ -259,7 +259,7 @@ let boardLayout =
   '</div>';
 
 async function loadBanners(){
-  let response = await fetch('https://elvispiter.github.io/elvis.json')
+  let response = await fetch('https://elvispiter.github.io/map/elvis.json')
   let boards = await response.json()
   for(let board of boards){
     // Создаем точку
@@ -287,6 +287,7 @@ async function loadBanners(){
       side.board = board
       side.image = board.images[index]
       side.location = board.location
+      side.uuid = board.uuid
       sides.push(side)
       if(side.id == preload.side) setTimeout(() => showOnMap(side), 1000);
       //else console.log(side.id, preload.side, side.id == preload.side)
