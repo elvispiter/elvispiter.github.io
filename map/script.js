@@ -80,7 +80,7 @@ function setSide(board, index){ // Обновляет контент балун�
   // Обновлем информацию
   params.set('side', board.id + board.sides[index])
   updateUrl()
-  $(".current-image").attr("src", './' + board.id + board.sides[index] + '.jpg'); //.
+  $(".current-image").attr("src", 'https://elvispiter.github.io/files/images/' + board.id + board.sides[index] + '.jpg'); //.
   $('.current-title').text(board.address)
   $('.point-meta').html('Тип: Билборд 6x3' +
                    '<br>ID: ' + board.id +
