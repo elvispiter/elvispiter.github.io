@@ -504,7 +504,7 @@ let params;
 let preload = Object();
 
 async function init(ignoreParams) {
-  await initLists()
+  if(!ignoreParams) await initLists()
   await loadBanners(!ignoreParams)
   await createFilters()
   if(ignoreParams){ 
