@@ -75,6 +75,8 @@ function distance(lat1, lon1, lat2, lon2) {
   return dist;
 }
 
+
+
 function setSide(board, index){ // Обновляет контент балуна и окон с информацией
   debug('Called setSide!')
   // Обновлем информацию
@@ -83,7 +85,7 @@ function setSide(board, index){ // Обновляет контент балун�
   $(".current-image").attr("src", 'https://elvispiter.github.io/content/images/' + board.id + board.sides[index] + '.jpg'); //.
   $('.current-title').text(board.address)
   $('.point-meta').html('Тип: Билборд 6x3' +
-                   '<br>ID: ' + board.id +
+                   '<br>ID: ' + board.uuid +
                    '<br>Сторона: ' + board.sides[index]
                    + '<div class="point-button-row"></div>')
   let isSelected;
@@ -221,6 +223,12 @@ $('.panel-selector').on('click', function () { // Обработчик выбо�
   this.className += ' active';
   $('.panel-wrapper').attr('class', 'panel-wrapper')
   $('#' + this.getAttribute('data-panel')).attr('class', 'panel-wrapper active')
+  if(this.getAttribute('data-panel') == 'selected') showSelectedOnMap()
+  else{
+    myMap.geoObjects.removeAll();
+    myMap.geoObjects.add(clusterer);
+  }
+
 })
 
 $('#backdrop').on('click', function () { // Закрываем окно с информацией при клике на темный фон 
@@ -257,16 +265,20 @@ let boardLayout =
       '<button class="bottom-button open button-select">Подробнее</button>' +
     '</div>' +
   '</div>';
-
-async function loadBanners(){
-  let response = await fetch('https://elvispiter.github.io/content/elvis.json')
-  let boards = await response.json()
+let boards;
+async function loadBanners(remote = true){
+  if(remote){
+    let response = await fetch('https://elvispiter.github.io/content/elvis.json')
+    boards = await response.json()
+  }
   for(let board of boards){
     // Создаем точку
     let placemark = new ymaps.Placemark(board.location, {
       balloonContent: boardLayout,
+      id: board.id,
     }, {
       preset: 'islands#nightIcon', // Стиль иконки
+      id: board.id,
       //openEmptyBalloon: true
     });
     placemarks[board.location] = placemark
@@ -304,7 +316,7 @@ async function loadBanners(){
 }
 
 let options = {
-  valueNames: [ 'address', 'side', 'id', 'selected', 'uuid'],
+  valueNames: [ 'address', 'side', 'id', 'selected', 'uuid', 'board'],
   item: function (side) {
     let checked =  ''
     if(side.selected) checked = 'checked '
@@ -384,10 +396,46 @@ function createFilters () {
   })
 }
 
-$('#resetPoi').on('click', function () {
+function showSelectedOnMap() {
+  myMap.geoObjects.removeAll();
+  console.log("call showSelectedOnMap")
+  let boardCandidates = []
+  for(let side of selected.visibleItems){
+    let board = side.values().board
+    if(!boardCandidates.includes(board)){
+      boardCandidates.push(board)
+      let placemark = new ymaps.Placemark(board.location, {
+        balloonContent: boardLayout,
+      }, {
+        preset: 'islands#nightIcon', // Стиль иконки
+        //openEmptyBalloon: true
+      });
+      placemarks[board.location] = placemark
+      // Вызываем функцию при клике на балун
+      placemark.events.add('balloonopen', function (e) {
+        document.getElementById('id' + board.id + board.sides[0]).scrollIntoView()
+        document.getElementById('panel-selector-container').scrollIntoView() // needed for mobile
+          setSide(board, 0);
+      });
+      // Добавляем точку в кластеризатор
+      console.log(placemark)
+      myMap.geoObjects.add(placemark)
+    }
+  }
+} 
+
+
+function resetAll(){
   sidesList.remove()
   sidesList.add(sides)
   setPoiBtn(false)
+  myMap.geoObjects.removeAll()
+  clusterer.removeAll()
+  preload.side = ''
+  init(true)
+}
+$('#resetPoi').on('click', function () {
+resetAll();
 })
 
 async function getPOI(event, query = false) {
@@ -406,7 +454,6 @@ async function getPOI(event, query = false) {
   myMap.geoObjects.removeAll();
   clusterer.removeAll();
   myMap.geoObjects.add(clusterer);
-  //myMap.setCenter
   let poisBuff = []
   for (var i = 0; i < json.features.length; i++) {
     let poi = Object();
@@ -456,6 +503,21 @@ async function getPOI(event, query = false) {
 let params;
 let preload = Object();
 
+async function init(ignoreParams) {
+  await initLists()
+  await loadBanners(!ignoreParams)
+  await createFilters()
+  if(ignoreParams){ 
+    console.log('return')
+    return
+  }
+  if(params.get("info") === 'true') setInfo(true)
+  if(params.get("details") === 'true') setDetails(true)
+  if(params.get("selected")){
+    for(let i of params.get("selected").split(','))
+      selectSide(getById(i))
+  }
+}
 ymaps.ready(function () {
       initDetailsMap()
       params = new URLSearchParams(window.location.search);
@@ -475,18 +537,6 @@ ymaps.ready(function () {
           clusterHideIconOnBalloonOpen: false,
           geoObjectHideIconOnBalloonOpen: false
       });
-
-      async function init() {
-        await initLists()
-        await loadBanners()
-        await createFilters()
-        if(params.get("info") === 'true') setInfo(true)
-        if(params.get("details") === 'true') setDetails(true)
-        if(params.get("selected")){
-          for(let i of params.get("selected").split(','))
-            selectSide(getById(i))
-        }
-      }
 
       init()
 });
