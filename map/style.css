@@ -116,6 +116,7 @@ a {
   flex-wrap: wrap;
   /* font-size: 1.2em; */
   margin: 0px 24px;
+  cursor: default;
 }
 
 .panel-selector {

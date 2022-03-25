@@ -10,6 +10,8 @@ let clusterer;
 let myMap;
 let distThreshold = 1000;
 let poiLastQuery;
+let poiActive = false;
+let poiBuffer = [];
 
 function debug(args) {
   console.log("[DEBUG] " + args)
@@ -50,8 +52,7 @@ $('#showSides').on('click', function() {
   setPoiBtn(true)
   sidesList.remove()
   sidesList.add([...new Set(sideCandidates)])
-    //$('.panel-selector').attr('class', 'panel-selector')
-    //showSides.className = 'bottom-button search-selector outline';
+  showListOnMap(sidesList)
   $('.panel-selector').attr('class', 'panel-selector')
   searchSelector.className += ' active'
   $('.panel-wrapper').attr('class', 'panel-wrapper')
@@ -114,6 +115,10 @@ function setSide(board, index){ // Обновляет контент балун�
     setBackdrop(true);
     setInfo(true);
   });
+  $('.baloon-image').on('click', function () {
+    setBackdrop(true);
+    setInfo(true);
+  });
   // Обновляем статическую карту в окне с информацией
   let coordinates = board.location[1] + ',' +  board.location[0] // API требует перевернутых координат ¯\_(ツ)_/¯
   document.querySelector('.map-img').src = 
@@ -137,6 +142,7 @@ function selectSide (side) { // Добавлет сторону в выборк�
   $('.id' + side.id).prop('checked', true);
   setSide(side.board, side.board.sides.indexOf(side.side))
   updateSelectedCount()
+  if(prevPanel == 'selected') showListOnMap(selected)
 }
 
 function deselectSide (side) { // Удаляет сторону из выборки
@@ -147,6 +153,7 @@ function deselectSide (side) { // Удаляет сторону из выбор�
   selected.remove('id', side.id)
   setSide(side.board, side.board.sides.indexOf(side.side))
   updateSelectedCount()
+  if(prevPanel == 'selected') showListOnMap(selected)
 }
 
 function getById(id) { // Возвращает сторону по ID вида id16А
@@ -196,12 +203,12 @@ function setDetails(show) { // Устанавливает видимость п�
   setBackdrop(false);
   let details = document.querySelector("#details")
   if (show) details.className += ' active'
-  else details.className = details.className.replace('active', '')
+  else details.className = details.className.replaceAll('active', '')
 }
 
 function setPoiBtn(show) {
   if(show) resetPoi.className += ' button-active'
-  else resetPoi.className = resetPoi.className.replace('button-active', '')
+  else resetPoi.className = resetPoi.className.replaceAll('button-active', '')
 }
 
 function showOnMap(side) { // Приближает карту и открывает балун переданной стороны
@@ -218,17 +225,44 @@ function initDetailsMap() { // Инициализирует карту в окн
 }
 
 
+function showPoiOnMap(){
+  for(let itemm of poiBuffer){
+    myMap.geoObjects.add(itemm);
+  }
+}
+let prevPanel = "search";
 $('.panel-selector').on('click', function () { // Обработчик выбора бокового окна (поиск, выборка, poi)
+  if(this.getAttribute('data-panel') == 'search' && poiActive){
+    if(sideCandidates.length == 0){
+      alert('Выберите хотя-бы один объект PoI!')
+      return
+    }
+    setPoiBtn(true)
+    sidesList.remove()
+    sidesList.add([...new Set(sideCandidates)])
+    showListOnMap(sidesList)
+    $('.panel-selector').attr('class', 'panel-selector')
+    searchSelector.className += ' active'
+    $('.panel-wrapper').attr('class', 'panel-wrapper')
+    $('#' + this.getAttribute('data-panel')).attr('class', 'panel-wrapper active')
+  }
   $('.panel-selector').attr('class', 'panel-selector')
   this.className += ' active';
   $('.panel-wrapper').attr('class', 'panel-wrapper')
   $('#' + this.getAttribute('data-panel')).attr('class', 'panel-wrapper active')
-  if(this.getAttribute('data-panel') == 'selected') showSelectedOnMap()
-  else{
+  if(this.getAttribute('data-panel') == 'selected') showListOnMap(selected)
+  if(this.getAttribute('data-panel') == 'poi-list' && poiActive){
+    console.log('poi-list')
+    console.log(poiBuffer)
+    showPoiOnMap();
+  }
+  if(prevPanel == 'selected'){
     myMap.geoObjects.removeAll();
     myMap.geoObjects.add(clusterer);
+    if(this.getAttribute('data-panel') == 'poi-list' && poiActive) showPoiOnMap()
+    if(this.getAttribute('data-panel') == 'selected') showListOnMap(selected)
   }
-
+  prevPanel = this.getAttribute('data-panel')
 })
 
 $('#backdrop').on('click', function () { // Закрываем окно с информацией при клике на темный фон 
@@ -255,7 +289,7 @@ let boardLayout =
   '<div class = "point-container">' +
     '<a class="point-title current-title"></a>' +
     '<div class="point-description">' +
-      '<img class="point-image current-image" src=""/>' +
+      '<img class="point-image current-image baloon-image" src=""/>' +
       '<a class="point-meta">Тип: Билборд 6x3<br>ID: 24А<br>Сторона: А<br>'+ 
         '<div class="point-button-row"></div>'+
       '</a>' +
@@ -396,11 +430,11 @@ function createFilters () {
   })
 }
 
-function showSelectedOnMap() {
+function showListOnMap(list) {
   myMap.geoObjects.removeAll();
-  console.log("call showSelectedOnMap")
+  console.log("call showListdOnMap")
   let boardCandidates = []
-  for(let side of selected.visibleItems){
+  for(let side of list.visibleItems){
     let board = side.values().board
     if(!boardCandidates.includes(board)){
       boardCandidates.push(board)
@@ -426,12 +460,15 @@ function showSelectedOnMap() {
 
 
 function resetAll(){
-  sidesList.remove()
-  sidesList.add(sides)
+  sides = []
+  sideCandidates = []
+  poiBuffer = []
   setPoiBtn(false)
+  sidesList.remove()
   myMap.geoObjects.removeAll()
   clusterer.removeAll()
   preload.side = ''
+  poiActive = false
   init(true)
 }
 $('#resetPoi').on('click', function () {
@@ -445,8 +482,14 @@ async function getPOI(event, query = false) {
     if(value.length < 3) pois.clear()
     await new Promise(r => setTimeout(r, 500));
     if(form.value != value || value.length < 3) return
+    if(form.value == ''){
+      resetAll()
+      return
+    }
     query = event.target.value
   }
+  poiActive = true
+  poiBuffer = []
   sideCandidates = []
   poiLastQuery = query;
   let response = await fetch("https://search-maps.yandex.ru/v1/?apikey=5c9ccb05-ffe4-42fe-b2a6-114dd46e632c&text=" + query + "&bbox=27.696353,61.200687~33.950239,58.379111&lang=ru_RU&results=500")
@@ -481,6 +524,7 @@ async function getPOI(event, query = false) {
               setSide(side.board, 0);
           });
           myMap.geoObjects.add(placemark)
+          poiBuffer.push(placemark)
         }
         poi.distance = Math.round(minDist)
       }
@@ -489,12 +533,13 @@ async function getPOI(event, query = false) {
     //  console.log(banners)
     //})
     if(minDist < distThreshold) {
-      myMap.geoObjects.add(new ymaps.Placemark(poi.coordinates.slice().reverse(), {
-      balloonContent: poi.name + ', ' + poi.description
-      }, {
-          preset: 'islands#circleDotIcon',
-          iconColor: 'red'
-      })); poisBuff.push(poi);
+      let a = new ymaps.Placemark(poi.coordinates.slice().reverse(), {
+        balloonContent: poi.name + ', ' + poi.description
+        }, {
+            preset: 'islands#circleDotIcon',
+            iconColor: 'red'
+        });
+      myMap.geoObjects.add(a); poiBuffer.push(a); poisBuff.push(poi);
     }}
   pois.remove()
   pois.add(poisBuff)
@@ -505,6 +550,10 @@ let preload = Object();
 
 async function init(ignoreParams) {
   if(!ignoreParams) await initLists()
+  else{
+    sidesList = new List('search', options, [])
+    pois = new List('poi-list', optionsPOI, [])  
+  }
   await loadBanners(!ignoreParams)
   await createFilters()
   if(ignoreParams){ 
