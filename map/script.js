@@ -146,8 +146,8 @@ function selectSide (side) { // Добавлет сторону в выборк�
 }
 
 function deselectSide (side) { // Удаляет сторону из выборки
-  document.getElementById('search').querySelector('#id' + side.id).querySelector('input').checked = false
-  document.getElementById('selected').querySelector('#id' + side.id).querySelector('input').checked = false
+  //document.getElementById('search').querySelector('#id' + side.id).querySelector('input').checked = false
+  //document.getElementById('selected').querySelector('#id' + side.id).querySelector('input').checked = false
   $('.id' + side.id).prop('checked', false);
   console.log(side)
   selected.remove('id', side.id)
